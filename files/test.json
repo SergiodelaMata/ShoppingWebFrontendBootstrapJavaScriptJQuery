@@ -195,12 +195,26 @@
         {
             "idUser": 1,
             "email": "admin@gmail.com",
-            "password": "admin"
+            "password": "admin",
+            "role": "admin"
         },
         {
             "idUser": 2,
             "email": "admin2@gmail.com",
-            "password": "admin2"
+            "password": "admin2",
+            "role": "admin"
+        },
+        {
+            "idUser": 3,
+            "email": "user@gmail.com",
+            "password": "user",
+            "role": "user"
+        },
+        {
+            "idUser": 4,
+            "email": "user2@gmail.com",
+            "password": "user2",
+            "role": "user"
         }
     ]
 }
