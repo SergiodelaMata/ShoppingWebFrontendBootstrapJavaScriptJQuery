@@ -49,6 +49,7 @@ function statusLogin(){
         button.setAttribute("data-toggle", "dropdown");
 
         var ul = document.createElement("ul");
+        ul.id = "dropdown-menu";
         ul.classList.add("dropdown-menu");
         ul.classList.add("dropdown-menu-right");
         ul.classList.add("mt-2");
@@ -156,3 +157,8 @@ function statusLogin(){
 
     }
 }
+
+$("#login").click(function() {
+    $("#dropdown-menu").toggle("slow", "linear", function() {
+    });
+});
