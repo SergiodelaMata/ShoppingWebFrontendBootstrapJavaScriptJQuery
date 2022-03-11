@@ -3,17 +3,30 @@ function getData()
     return $.getJSON("files/test.json");
 }
 
-getData().done(function(json){
+if(localStorage.categories !== null && localStorage.categories !== "" 
+    && localStorage.products !== null && localStorage.products !== ""
+    && localStorage.users !== null && localStorage.users !== "")
+{
+    var categories = JSON.parse(localStorage.categories);
+    var products = JSON.parse(localStorage.products);
+    var users = JSON.parse(localStorage.users);
 
-    var categories = json.categories;
-    var products = json.products;
-    var users = json.users;
-
-    localStorage.setItem('categories', JSON.stringify(categories));
-    localStorage.setItem('products', JSON.stringify(products));
-    localStorage.setItem('users', JSON.stringify(users));
     buildCatalog(categories, products);
-});
+}
+else
+{
+    getData().done(function(json){
+        var categories = json.categories;
+        var products = json.products;
+        var users = json.users;
+    
+        localStorage.setItem('categories', JSON.stringify(categories));
+        localStorage.setItem('products', JSON.stringify(products));
+        localStorage.setItem('users', JSON.stringify(users));
+        buildCatalog(categories, products);
+    });
+}
+
 
 function buildCatalog(categories, products)
 {
