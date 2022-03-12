@@ -6,9 +6,9 @@ function getData()
     return $.getJSON("files/test.json");
 }
 
-if(localStorage.categories !== null && localStorage.categories !== "" 
-    && localStorage.products !== null && localStorage.products !== ""
-    && localStorage.users !== null && localStorage.users !== "")
+if( localStorage.categories !== "" && localStorage.categories !== null && localStorage.categories !== undefined
+    && localStorage.products !== "" && localStorage.products !== null && localStorage.products !== undefined
+    && localStorage.users !== "" && localStorage.users !== null && localStorage.users !== undefined)
 {
     var categories = JSON.parse(localStorage.categories);
     var products = JSON.parse(localStorage.products);
@@ -51,7 +51,6 @@ buttonNewCategory.addEventListener("click", async() => {
             "idCategory" : parseInt(idCategory),
             "nameCategory" : nameCategory
         }
-    
         categories.push(newCategory);
         localStorage.setItem('categories', JSON.stringify(categories));
         alert("La nueva categoría ha sido creada.");
@@ -61,6 +60,4 @@ buttonNewCategory.addEventListener("click", async() => {
     {
         alert("La categoría introducida ya existe.");
     }
-
-    
 })

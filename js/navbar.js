@@ -5,7 +5,7 @@ function adminSections(){
     var userEmail = sessionStorage.getItem('email');
     var userRole = sessionStorage.getItem('role');
 
-    if(userEmail !== "" && userEmail !== null && userRole === "admin")
+    if(userEmail !== "" && userEmail !== null && userEmail !== undefined && userRole === "admin")
     {
         var liNewCategory = document.getElementById("newCategory");
         liNewCategory.classList.add("nav-item");
@@ -36,7 +36,7 @@ function statusLogin(){
     var button = document.createElement("button");
     
 
-    if(userEmail === "" || userEmail === null)
+    if(userEmail === "" || userEmail === null || userEmail === undefined)
     {
         li.classList.add("dropdown");
         li.classList.add("order-1");

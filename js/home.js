@@ -3,9 +3,10 @@ function getData()
     return $.getJSON("files/test.json");
 }
 
-if(localStorage.categories !== null && localStorage.categories !== "" 
-    && localStorage.products !== null && localStorage.products !== ""
-    && localStorage.users !== null && localStorage.users !== "")
+console.log(localStorage.categories);
+if( localStorage.categories !== "" && localStorage.categories !== null && localStorage.categories !== undefined
+    && localStorage.products !== "" && localStorage.products !== null && localStorage.products !== undefined
+    && localStorage.users !== "" && localStorage.users !== null && localStorage.users !== undefined)
 {
     var categories = JSON.parse(localStorage.categories);
     var products = JSON.parse(localStorage.products);
@@ -44,7 +45,7 @@ function buildCatalog(categories, products)
         var structureProducts = "";
         for(var j = 0; j < products.length; j++)
         {
-            if(products[j].idCategory === categories[i].idCategory)
+            if(parseInt(products[j].idCategory) === parseInt(categories[i].idCategory))
             {
                 structureProducts += 
                     "<div class='card col-sm-6' style='margin-bottom:0.5em;'>" 

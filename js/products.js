@@ -5,9 +5,9 @@ function getData()
     return $.getJSON("files/test.json");
 }
 
-if(localStorage.categories !== null && localStorage.categories !== "" 
-    && localStorage.products !== null && localStorage.products !== ""
-    && localStorage.users !== null && localStorage.users !== "")
+if( localStorage.categories !== "" && localStorage.categories !== null && localStorage.categories !== undefined
+    && localStorage.products !== "" && localStorage.products !== null && localStorage.products !== undefined
+    && localStorage.users !== "" && localStorage.users !== null && localStorage.users !== undefined)
 {
     var categories = JSON.parse(localStorage.categories);
     var products = JSON.parse(localStorage.products);
@@ -71,37 +71,39 @@ buttonNewProduct.addEventListener("click", async() => {
     {
         const codeProduct = document.getElementById("codeProduct").value;
         const titleProduct = document.getElementById("titleProduct").value;
-        const description = document.getElementById("description").innerHTML;
+        const description = document.getElementById("description").value;
         const price = document.getElementById("price").value;
         const numUnits = document.getElementById("numUnits").value;
         const image = document.getElementById("image").value;
     
-        const categories = JSON.parse(localStorage.categories);
         const products = JSON.parse(localStorage.products);
     
-    }
-    
-    /*const listCategories = categories.filter(categories => categories.nameCategory === nameCategory);
-    if(listCategories.length === 0)
-    {
-        const newCategory = {
-            "idCategory" : parseInt(idCategory),
-            "nameCategory" : nameCategory
+        const listProducts = products.filter(products => products.titleProduct === titleProduct);
+        if(listProducts.length === 0)
+        {
+            const newProduct = {
+                "codeProduct" : codeProduct,
+                "idCategory" : idCategory,
+                "titleProduct" : titleProduct,
+                "description" : description,
+                "price" : parseFloat(price),
+                "numUnits" : parseInt(numUnits),
+                "image" : image
+            }
+
+            console.log(newProduct);
+        
+            products.push(newProduct);
+            localStorage.setItem('products', JSON.stringify(products));
+            alert("El producto ha sido creado e introducido en su respectiva categoría.");
+            window.location.href = "home.html";
         }
-    
-        categories.push(newCategory);
-        localStorage.setItem('categories', JSON.stringify(categories));
-        alert("La nueva categoría ha sido creada.");
-        window.location.href = "home.html";
+        else
+        {
+            alert("El producto introducido ya existe.");
+        }
     }
-    else
-    {
-        alert("La categoría introducida ya existe.");
-    }*/
-
-    
 })
-
 
 function getSelectValues(select) {
     var result = [];
