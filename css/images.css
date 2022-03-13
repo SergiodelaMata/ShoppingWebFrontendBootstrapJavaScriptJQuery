@@ -1,0 +1,9 @@
+.zoom{
+    transition: all 1s ease-in-out;
+    transform: rotate3d(0,0,0,0deg);
+}
+
+.zoom:hover{
+    transform: scale(1.5);
+    z-index: 10;
+}

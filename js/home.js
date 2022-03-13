@@ -49,14 +49,13 @@ function buildCatalog(categories, products)
                 structureProducts += 
                     "<div class='card col-sm-6' style='margin-bottom:0.5em;'>" 
                         + "<div class='row'>"
-                            + "<div class='easyzoom easyzoom--overlay col-lg-5 col-md-6 col-sm-12 align-self-center' style='text-align:center;'>"
-                                + "<a href='" + products[j].image + "'></a>"
-                                + "<img class='mainimage' id='imageProduct" + j + "' src='" + products[j].image + "'data-zoom-image='"+ products[j].image + "' style='width:100%;'/>"
+                            + "<div class='col-lg-4 col-md-6 col-sm-12 align-self-center' style='text-align:center;'>"
+                                + "<img class='zoom' id='imageProduct" + j + "' src='" + products[j].image + "'style='width:100%;'/>"
                                 + "<p style='font-size:0.8em;'>Unidades: " + products[j].numUnits + "</p>"
                                 + "<h3 class='text-primary'>" + products[j].price + "€</h3>"
-                                + "<button class='btn btn-primary' type='button' style='width:100%;'>Añadir a<br>la cesta</button>"
+                                + "<button class='btn btn-primary' type='button' style='width:100%; margin-bottom:1em;'>Añadir a<br>la cesta</button>"
                             + "</div>"
-                            + "<div class='card-body col-lg-7 col-md-6 col-sm-12'>"
+                            + "<div class='card-body col-lg-8 col-md-6 col-sm-12'>"
                                 + "<strong>" + products[j].titleProduct + "</strong>" 
                                 + "<p class='text-muted' style='font-size:0.8em;'>" + products[j].codeProduct + "</p>"
                                 + "<p style='font-size:0.8em;'>" + products[j].description + "</p>"
@@ -70,6 +69,5 @@ function buildCatalog(categories, products)
         structureCategory += "</div></div></div>";
     }
     $("#categories").append(structureCategory);
-    $('.easyzoom').easyZoom();
 }
 
