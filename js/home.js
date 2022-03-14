@@ -11,7 +11,13 @@ if( localStorage.categories !== "" && localStorage.categories !== null && localS
     var products = JSON.parse(localStorage.products);
     var users = JSON.parse(localStorage.users);
 
+    if(localStorage.productsInBag === null || localStorage.productsInBag === undefined)
+    {
+        localStorage.setItem("productsInBag", JSON.stringify([]));
+    }
+
     buildCatalog(categories, products);
+    buildBag();
 }
 else
 {
@@ -23,7 +29,10 @@ else
         localStorage.setItem('categories', JSON.stringify(categories));
         localStorage.setItem('products', JSON.stringify(products));
         localStorage.setItem('users', JSON.stringify(users));
+
+        locatStorage.setItem('productsInBag', JSON.stringify([]));
         buildCatalog(categories, products);
+        buildBag();
     });
 }
 
@@ -73,7 +82,7 @@ function buildCatalog(categories, products)
                                 + "<img class='zoom' id='imageProduct" + j + "' src='" + products[j].image + "'style='width:100%;'/>"
                                 + "<p style='font-size:0.8em;'>Unidades: " + products[j].numUnits + "</p>"
                                 + "<h3 class='text-primary'>" + products[j].price + "€</h3>"
-                                + "<button class='btn btn-primary' type='button' style='width:100%; margin-bottom:1em;' codeProduct='" + products[j].codeProduct + "'>Añadir a<br>la cesta</button>"
+                                + "<button class='btn btn-primary' type='button' style='width:100%; margin-bottom:1em;' codeProduct='" + products[j].codeProduct + "' onClick='addProduct(this)'>Añadir a<br>la cesta</button>"
                             + "</div>"
                             + "<div class='card-body col-lg-8 col-md-6 col-sm-12'>"
                                 + "<strong>" + products[j].titleProduct + "</strong>" 
@@ -92,3 +101,92 @@ function buildCatalog(categories, products)
     $("#categories").append(structureCategory);
 }
 
+function addProduct(button)
+{
+    var containerBagProducts = document.getElementById("bag-products");
+    var productsInBag = JSON.parse(localStorage.productsInBag);
+    var products = JSON.parse(localStorage.products);
+
+    const codeProduct = button.getAttribute("codeproduct");
+    const product = products.filter(products => products.codeProduct === codeProduct)[0];
+
+    if(product.numUnits !== 0)
+    {
+        if(productsInBag.length !== 0)
+        {
+
+        }
+        else
+        {
+            const productIntroduced = {
+                "codeProduct": product.codeProduct,
+                "titleProduct": product.titleProduct,
+                "description": product.description,
+                "price": product.price,
+                "numUnits": 1,
+                "image": product.image
+            }
+            productsInBag.push(productIntroduced);
+            localStorage.setItem("productsInBag", JSON.stringify(productsInBag));
+            const divProductBag = document.createElement("div");
+            divProductBag.id = productIntroduced.codeProduct;
+            divProductBag.classList.add("card");
+            containerBagProducts.appendChild(divProductBag);
+
+        }
+
+    }
+    else
+    {
+        button.disabled = true;
+
+    }
+
+    /*if(productsInBag.length === 0 || productsInBag.filter(productsInBag => productsInBag.codeproduct === codeproduct))
+    {
+
+    }*/
+
+}
+
+function buildBag(){
+    var containerBagProducts = document.getElementById("bag-products");
+    var productsInBag = JSON.parse(localStorage.productsInBag);
+
+    var divTotalPrice = document.createElement("div");
+    divTotalPrice.classList.add("card");
+    containerBagProducts.appendChild(divTotalPrice);
+
+    var divRowTotalPrice = document.createElement("div");
+    divRowTotalPrice.classList.add("row");
+    divTotalPrice.appendChild(divRowTotalPrice);
+
+    var divTextTotal = document.createElement("div");
+    divTextTotal.classList.add("col-sm-12");
+    divTextTotal.classList.add("col-md-6");
+    divTextTotal.classList.add("col-lg-6");
+    divRowTotalPrice.appendChild(divTextTotal);
+
+    var pTextTotalPrice = document.createElement("h5");
+    pTextTotalPrice.textContent = "Coste Total:";
+    pTextTotalPrice.style.marginLeft = "0.5em";
+    divTextTotal.appendChild(pTextTotalPrice);
+
+    var divTotalPriceText = document.createElement("div");
+    divTotalPriceText.classList.add("col-sm-12");
+    divTotalPriceText.classList.add("col-md-6");
+    divTotalPriceText.classList.add("col-lg-6");
+    divTotalPriceText.style.textAlign = "right";
+    divRowTotalPrice.appendChild(divTotalPriceText);
+
+    var totalPrice = document.createElement("p");
+    totalPrice.textContent = "0 €";
+    totalPrice.style.marginRight = "0.5em";
+    divTotalPriceText.appendChild(totalPrice);
+
+    for(var i = 0; i < productsInBag.length; i++)
+    {
+
+    }
+
+}
