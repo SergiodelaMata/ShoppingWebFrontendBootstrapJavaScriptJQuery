@@ -30,7 +30,7 @@ else
         localStorage.setItem('products', JSON.stringify(products));
         localStorage.setItem('users', JSON.stringify(users));
 
-        locatStorage.setItem('productsInBag', JSON.stringify([]));
+        localStorage.setItem('productsInBag', JSON.stringify([]));
         buildCatalog(categories, products);
         buildBag();
     });
@@ -63,11 +63,11 @@ function buildCatalog(categories, products)
                     structureProducts += 
                     "<div class='card col-sm-6' style='margin-bottom:0.5em;'>" 
                         + "<div class='row'>"
-                            + "<div class='col-lg-4 col-md-6 col-sm-12 align-self-center' style='text-align:center;'>"
+                            + "<div class='col-lg-4 col-md-6 col-sm-12 align-self-center' style='text-align:center;opacity: 0.5; margin-top: 1em;'>"
                                 + "<img class='zoom' id='imageProduct" + j + "' src='" + products[j].image + "'style='width:100%;'/>"
                                 + "<p style='font-size:0.8em;'>Unidades: " + products[j].numUnits + "</p>"
                                 + "<h3 class='text-primary'>" + products[j].price + "€</h3>"
-                                + "<button class='btn btn-primary' type='button' style='width:100%; margin-bottom:1em;' codeProduct='" + products[j].codeProduct + "' onClick='addProduct(this)' disabled='true'>Añadir a<br>la cesta</button>"
+                                + "<button id='buttonProduct" + j + "' class='btn btn-primary' type='button' style='width:100%; margin-bottom:1em;' codeProduct='" + products[j].codeProduct + "' onClick='addProduct(this)' disabled='true'>Añadir a<br>la cesta</button>"
                             + "</div>"
                             + "<div class='card-body col-lg-8 col-md-6 col-sm-12'>"
                                 + "<strong>" + products[j].titleProduct + "</strong>" 
@@ -83,7 +83,7 @@ function buildCatalog(categories, products)
                     "<div class='card col-sm-6' style='margin-bottom:0.5em;'>" 
                         + "<div class='row'>"
                             + "<div class='col-lg-4 col-md-6 col-sm-12 align-self-center' style='text-align:center;'>"
-                                + "<img class='zoom' id='imageProduct" + j + "' src='" + products[j].image + "'style='width:100%; opacity: 0.5'/>"
+                                + "<img class='zoom' id='imageProduct" + j + "' src='" + products[j].image + "'style='width:100%; opacity: 0.5; margin-top: 1em;'/>"
                                 + "<p class='bg-danger' style='font-size:0.8em;'>No hay stock</p>"
                                 + "<h3 class='text-primary'>" + products[j].price + "€</h3>"
                             + "</div>"
@@ -101,10 +101,10 @@ function buildCatalog(categories, products)
                     "<div class='card col-sm-6' style='margin-bottom:0.5em;'>" 
                         + "<div class='row'>"
                             + "<div class='col-lg-4 col-md-6 col-sm-12 align-self-center' style='text-align:center;'>"
-                                + "<img class='zoom' id='imageProduct" + j + "' src='" + products[j].image + "'style='width:100%;'/>"
+                                + "<img class='zoom' id='imageProduct" + j + "' src='" + products[j].image + "'style='width:100%; margin-top: 1em;'/>"
                                 + "<p style='font-size:0.8em;'>Unidades: " + products[j].numUnits + "</p>"
                                 + "<h3 class='text-primary'>" + products[j].price + "€</h3>"
-                                + "<button class='btn btn-primary' type='button' style='width:100%; margin-bottom:1em;' codeProduct='" + products[j].codeProduct + "' onClick='addProduct(this)'>Añadir a<br>la cesta</button>"
+                                + "<button id='buttonProduct" + j + "' class='btn btn-primary' type='button' style='width:100%; margin-bottom:1em;' codeProduct='" + products[j].codeProduct + "' onClick='addProduct(this)'>Añadir a<br>la cesta</button>"
                             + "</div>"
                             + "<div class='card-body col-lg-8 col-md-6 col-sm-12'>"
                                 + "<strong>" + products[j].titleProduct + "</strong>" 
@@ -209,9 +209,43 @@ function addProduct(button)
     buildBag();
 }
 
+function removeProduct(button)
+{
+    var productsInBag = JSON.parse(localStorage.productsInBag);
+
+    const codeProduct = button.getAttribute("codeproduct");
+    const product = productsInBag.filter(products => products.codeProduct === codeProduct)[0];
+    const index = productsInBag.findIndex(products => products.codeProduct === codeProduct);
+
+    if(parseInt(product.numUnits) === 1)
+    {
+        productsInBag = productsInBag.filter(function(element){
+            return element != product;
+        })
+        localStorage.setItem("productsInBag", JSON.stringify(productsInBag));
+    }
+    else
+    {
+        const productUpdated = {
+            "codeProduct": productsInBag[index].codeProduct,
+            "titleProduct": productsInBag[index].titleProduct,
+            "description": productsInBag[index].description,
+            "price": productsInBag[index].price,
+            "numUnits": productsInBag[index].numUnits - 1,
+            "image": productsInBag[index].image
+        }
+        productsInBag[index] = productUpdated;
+        localStorage.setItem("productsInBag", JSON.stringify(productsInBag));
+    }
+
+    buildBag();
+
+}
+
 function buildBag(){
     var containerBagProducts = document.getElementById("bag-products");
     removeAllChildNodes(containerBagProducts);
+    var products = JSON.parse(localStorage.products);
     var productsInBag = JSON.parse(localStorage.productsInBag);
 
     var divTotalPrice = document.createElement("div");
@@ -267,21 +301,77 @@ function buildBag(){
         divLeftSideCard.classList.add("align-self-center");
         divLeftSideCard.classList.add("col-sm-12");
         divLeftSideCard.classList.add("col-md-6");
-        divLeftSideCard.classList.add("col-lg-4");
+        divLeftSideCard.classList.add("col-lg-5");
         divLeftSideCard.style.textAlign = "center";
         divRowProductBag.appendChild(divLeftSideCard);
 
         var imageProduct = document.createElement("img");
-        imageProduct.classList.add("zoom");
         imageProduct.src = productsInBag[i].image;
-        imageProduct.style.width = "100%";
+        imageProduct.style.width = "80%";
         divLeftSideCard.appendChild(imageProduct);
 
+        var divUnitsButtons = document.createElement("div");
+        divUnitsButtons.classList.add("container");
+        divLeftSideCard.appendChild(divUnitsButtons);
+
+
+        var divUnits = document.createElement("div");
+        divUnits.classList.add("row");
+        divUnits.style.marginTop = "1em";
+        divUnitsButtons.appendChild(divUnits);
+
+        var removeUnitProduct = document.createElement("button");
+        removeUnitProduct.type = "button";
+        removeUnitProduct.classList.add("btn");
+        removeUnitProduct.classList.add("btn-primary");
+        removeUnitProduct.setAttribute("codeProduct", productsInBag[i].codeProduct);
+        removeUnitProduct.setAttribute("onClick", "removeProduct(this)");
+        removeUnitProduct.style.width = "33%";
+        divUnits.appendChild(removeUnitProduct);
+
+        var iconRemove = document.createElement("img");
+        iconRemove.src = "img/dash.svg";
+        removeUnitProduct.appendChild(iconRemove);
+
+        var divUnitsText = document.createElement("div");
+        divUnitsText.style.width = "33%";
+        divUnits.appendChild(divUnitsText);
+
+
         var unitsProduct = document.createElement("p");
-        unitsProduct.textContent = "Unidades: " + productsInBag[i].numUnits;
-        unitsProduct.style.fontSize = "0.8em";
+        unitsProduct.textContent = productsInBag[i].numUnits;
         unitsProduct.style.textAlign = "center";
-        divLeftSideCard.appendChild(unitsProduct);
+        unitsProduct.style.fontSize = "1em";
+        divUnitsText.appendChild(unitsProduct);
+
+        var addUnitProduct = document.createElement("button");
+        addUnitProduct.type = "button";
+        addUnitProduct.classList.add("btn");
+        addUnitProduct.classList.add("btn-primary");
+        addUnitProduct.setAttribute("codeProduct", productsInBag[i].codeProduct);
+        addUnitProduct.setAttribute("onClick", "addProduct(this)");
+        addUnitProduct.style.width = "33%";
+        var product = products.filter(product => product.codeProduct === productsInBag[i].codeProduct);
+        var index = products.findIndex(product => product.codeProduct === productsInBag[i].codeProduct);
+        var imageProduct = document.getElementById("imageProduct" + index);
+        var buttonProduct = document.getElementById("buttonProduct" + index);
+        if(parseInt(product[0].numUnits) <= parseInt(productsInBag[i].numUnits))
+        {
+            addUnitProduct.setAttribute("disabled", "true");
+            imageProduct.style.opacity = "0.5";
+            buttonProduct.setAttribute("disabled", "true");
+        }
+        else
+        {
+            addUnitProduct.removeAttribute("disabled");
+            imageProduct.style.opacity = "1";
+            buttonProduct.removeAttribute("disabled");
+        }
+        divUnits.appendChild(addUnitProduct);
+
+        var iconAdd = document.createElement("img");
+        iconAdd.src = "img/plus.svg";
+        addUnitProduct.appendChild(iconAdd);
 
         var priceProduct = document.createElement("h3");
         priceProduct.classList.add("text-primary");
@@ -293,7 +383,7 @@ function buildBag(){
         divRightSideCard.classList.add("card-body");
         divRightSideCard.classList.add("col-sm-12");
         divRightSideCard.classList.add("col-md-6");
-        divRightSideCard.classList.add("col-lg-8");
+        divRightSideCard.classList.add("col-lg-7");
         divRowProductBag.appendChild(divRightSideCard);
 
         var titleProduct = document.createElement("strong");
@@ -312,7 +402,6 @@ function buildBag(){
         divRightSideCard.appendChild(descriptionProduct);
 
     }
-
 }
 
 function removeAllChildNodes(parent){
