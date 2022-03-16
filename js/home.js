@@ -278,10 +278,26 @@ function buildBag(){
 
     var totalPrice = document.createElement("p");
     totalPrice.textContent = additionTotalPrice() + " €";
-    totalPrice.style.marginRight = "0.5em";
     totalPrice.style.marginTop = "0.5em";
+    totalPrice.style.marginRight = "0.5em";
     totalPrice.style.marginBottom = "0.5em";
     divTotalPriceText.appendChild(totalPrice);
+
+    var divFinishBuy = document.createElement("div");
+    divFinishBuy.classList.add("container");
+    divFinishBuy.classList.add("col-sm-12");
+    divFinishBuy.classList.add("col-md-12");
+    divFinishBuy.classList.add("col-lg-12");
+    divFinishBuy.style.width = "100%";
+    divRowTotalPrice.appendChild(divFinishBuy);
+
+    var buttonFinishBuy = document.createElement("button");
+    buttonFinishBuy.textContent = "Hacer compra";
+    buttonFinishBuy.type = "button";
+    buttonFinishBuy.classList.add("btn");
+    buttonFinishBuy.classList.add("btn-primary");
+    buttonFinishBuy.style.width = "100%";
+    divFinishBuy.appendChild(buttonFinishBuy);
 
     for(var i = 0; i < productsInBag.length; i++)
     {
