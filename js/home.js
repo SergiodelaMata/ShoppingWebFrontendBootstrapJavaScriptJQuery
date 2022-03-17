@@ -331,6 +331,7 @@ function buildBag(){
         divRowProductBag.appendChild(divLeftSideCard);
 
         var imageProduct = document.createElement("img");
+        imageProduct.classList.add("zoom");
         imageProduct.src = productsInBag[i].image;
         imageProduct.style.width = "80%";
         divLeftSideCard.appendChild(imageProduct);
