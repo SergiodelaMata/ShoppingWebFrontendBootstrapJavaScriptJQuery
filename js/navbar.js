@@ -84,7 +84,7 @@ function statusLogin(){
         inputPassword.classList.add("form-control");
         inputPassword.classList.add("form-control-sm");
         inputPassword.setAttribute("placeholder", "Contraseña");
-        inputPassword.type = "text";
+        inputPassword.type = "password";
         inputPassword.setAttribute("required", true);
         divPassword.appendChild(inputPassword);
 

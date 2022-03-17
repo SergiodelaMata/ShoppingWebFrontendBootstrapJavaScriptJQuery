@@ -297,6 +297,15 @@ function buildBag(){
     buttonFinishBuy.classList.add("btn");
     buttonFinishBuy.classList.add("btn-primary");
     buttonFinishBuy.style.width = "100%";
+    if(productsInBag.length !== 0)
+    {
+        buttonFinishBuy.setAttribute("onClick", "makeBuy()");
+        buttonFinishBuy.removeAttribute("disabled");
+    }
+    else
+    {
+        buttonFinishBuy.disabled = true;
+    }
     divFinishBuy.appendChild(buttonFinishBuy);
 
     for(var i = 0; i < productsInBag.length; i++)
@@ -437,3 +446,39 @@ function additionTotalPrice()
     totalPrice = Math.round(totalPrice * 100) / 100;
     return totalPrice;
 }
+
+function makeBuy()
+{
+    var totalPrice = additionTotalPrice();
+    var priceText = document.getElementById("priceText");
+    priceText.textContent = "El pago total ha sido de " + totalPrice + " €";
+    openModal();
+}
+
+function removeUnits(){
+    var products = JSON.parse(localStorage.products);
+    var productsInBag = JSON.parse(localStorage.productsInBag);
+
+    for(let i = 0; i < productsInBag.length; i++)
+    {
+        var product = products.filter(product => product.codeProduct === productsInBag[i].codeProduct)[0];
+        var index = products.findIndex(product => product.codeProduct === productsInBag[i].codeProduct);
+        product.numUnits -= productsInBag[i].numUnits;
+        products[index] = product;
+    }
+
+    localStorage.setItem('products', JSON.stringify(products));
+    localStorage.setItem('productsInBag', JSON.stringify([]));
+    
+}
+
+function openModal() {
+    let element = document.getElementById('overlay')
+    element.style.display = 'block'
+  }
+  function closeModal() {
+    let element = document.getElementById('overlay')
+    element.style.display = 'none'
+    removeUnits();
+    location.reload();
+  }
