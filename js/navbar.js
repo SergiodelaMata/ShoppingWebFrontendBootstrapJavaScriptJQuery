@@ -226,7 +226,7 @@ $("#login").click(function() {
 function showNavbarSmall()
 {
     var show = JSON.parse(localStorage.showNavbarSmall);
-    var navbar = document.getElementById("navbar");
+    var navbar = document.getElementsByClassName("navbar-div");
     //Si es la primera vez que se ejecuta, se muestra la barra de navegación
     if(show === undefined || show === null)
     {

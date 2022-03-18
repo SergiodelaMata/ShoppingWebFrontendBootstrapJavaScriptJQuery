@@ -73,10 +73,10 @@ function buildCatalog(categories, products)
                     "<div class='card col-sm-6' style='margin-bottom:0.5em;'>" 
                         + "<div class='row'>"
                             + "<div class='col-lg-4 col-md-6 col-sm-12 align-self-center' style='text-align:center;opacity: 0.5; margin-top: 1em;'>"
-                                + "<img class='zoom' id='imageProduct" + j + "' src='" + products[j].image + "'style='width:100%;'/>"
+                                + "<img class='zoom img-product' id='imageProduct" + j + "' src='" + products[j].image + "'style='width:100%;'/>"
                                 + "<p style='font-size:0.8em;'>Unidades: " + products[j].numUnits + "</p>"
                                 + "<h3 class='text-primary'>" + products[j].price + "€</h3>"
-                                + "<button id='buttonProduct" + j + "' class='btn btn-primary' type='button' style='width:100%; margin-bottom:1em;' codeProduct='" + products[j].codeProduct + "' onClick='addProduct(this)' disabled='true' title='Agregar a la cesta'>Añadir a<br>la cesta</button>"
+                                + "<button id='buttonProduct" + j + "' class='btn btn-primary btn-add' type='button' style='margin-bottom:1em; font-size: 0.8em;' codeProduct='" + products[j].codeProduct + "' onClick='addProduct(this)' disabled='true' title='Añadir a la cesta'>Añadir a<br>la cesta</button>"
                             + "</div>"
                             + "<div class='card-body col-lg-8 col-md-6 col-sm-12'>"
                                 + "<strong>" + products[j].titleProduct + "</strong>" 
@@ -94,7 +94,7 @@ function buildCatalog(categories, products)
                     "<div class='card col-sm-6' style='margin-bottom:0.5em;'>" 
                         + "<div class='row'>"
                             + "<div class='col-lg-4 col-md-6 col-sm-12 align-self-center' style='text-align:center;'>"
-                                + "<img class='zoom' id='imageProduct" + j + "' src='" + products[j].image + "'style='width:100%; opacity: 0.5; margin-top: 1em;'/>"
+                                + "<img class='zoom img-product' id='imageProduct" + j + "' src='" + products[j].image + "'style='opacity: 0.5; margin-top: 1em;'/>"
                                 + "<p class='bg-danger' style='font-size:0.8em;'>No hay stock</p>"
                                 + "<h3 class='text-primary'>" + products[j].price + "€</h3>"
                             + "</div>"
@@ -114,10 +114,10 @@ function buildCatalog(categories, products)
                     "<div class='card col-sm-6' style='margin-bottom:0.5em;'>" 
                         + "<div class='row'>"
                             + "<div class='col-lg-4 col-md-6 col-sm-12 align-self-center' style='text-align:center;'>"
-                                + "<img class='zoom' id='imageProduct" + j + "' src='" + products[j].image + "'alt='" + products[j].titleProduct + "' title='" + products[j].titleProduct + "' style='width:100%; margin-top: 1em;'/>"
+                                + "<img class='zoom img-product' id='imageProduct" + j + "' src='" + products[j].image + "'alt='" + products[j].titleProduct + "' title='" + products[j].titleProduct + "' style='margin-top: 1em;'/>"
                                 + "<p style='font-size:0.8em;'>Unidades: " + products[j].numUnits + "</p>"
                                 + "<h3 class='text-primary'>" + products[j].price + "€</h3>"
-                                + "<button id='buttonProduct" + j + "' class='btn btn-primary' type='button' style='width:100%; margin-bottom:1em;' codeProduct='" + products[j].codeProduct + "' onClick='addProduct(this)' title='Agregar a la cesta'>Añadir a<br>la cesta</button>"
+                                + "<button id='buttonProduct" + j + "' class='btn btn-primary' type='button' style='width:100%; margin-bottom:1em; font-size: 0.8em;' codeProduct='" + products[j].codeProduct + "' onClick='addProduct(this)' title='Añadir a la cesta'>Añadir a<br>la cesta</button>"
                             + "</div>"
                             + "<div class='card-body col-lg-8 col-md-6 col-sm-12'>"
                                 + "<strong>" + products[j].titleProduct + "</strong>" 
@@ -363,10 +363,11 @@ function buildBag(){
 
         var imageProduct = document.createElement("img");
         imageProduct.classList.add("zoom");
+        imageProduct.classList.add("img-product-bag");
         imageProduct.src = productsInBag[i].image;
         imageProduct.alt = productsInBag[i].titleProduct;
         imageProduct.title = productsInBag[i].titleProduct;
-        imageProduct.style.width = "80%";
+        imageProduct.style.marginTop = "1em";
         divLeftSideCard.appendChild(imageProduct);
 
         var divUnitsButtons = document.createElement("div");
@@ -379,24 +380,11 @@ function buildBag(){
         divUnits.style.marginTop = "1em";
         divUnitsButtons.appendChild(divUnits);
 
-        var removeUnitProduct = document.createElement("button");
-        removeUnitProduct.type = "button";
-        removeUnitProduct.title = "Eliminar de la cesta";
-        removeUnitProduct.classList.add("btn");
-        removeUnitProduct.classList.add("btn-primary");
-        removeUnitProduct.setAttribute("codeProduct", productsInBag[i].codeProduct);
-        removeUnitProduct.setAttribute("onClick", "removeProduct(this)");
-        removeUnitProduct.style.width = "33%";
-        divUnits.appendChild(removeUnitProduct);
-
-        var iconRemove = document.createElement("img");
-        iconRemove.src = "img/dash.svg";
-        removeUnitProduct.appendChild(iconRemove);
-
         var divUnitsText = document.createElement("div");
-        divUnitsText.style.width = "33%";
+        divUnitsText.classList.add("col-sm-12");
+        divUnitsText.classList.add("col-md-12");
+        divUnitsText.classList.add("col-lg-12");
         divUnits.appendChild(divUnitsText);
-
 
         var unitsProduct = document.createElement("p");
         unitsProduct.textContent = productsInBag[i].numUnits;
@@ -404,14 +392,35 @@ function buildBag(){
         unitsProduct.style.fontSize = "1em";
         divUnitsText.appendChild(unitsProduct);
 
+        var removeUnitProduct = document.createElement("button");
+        removeUnitProduct.type = "button";
+        removeUnitProduct.title = "Eliminar de la cesta";
+        removeUnitProduct.classList.add("btn");
+        removeUnitProduct.classList.add("btn-primary");
+        removeUnitProduct.classList.add("col-sm-12");
+        removeUnitProduct.classList.add("col-md-6");
+        removeUnitProduct.classList.add("col-lg-6");
+        removeUnitProduct.setAttribute("codeProduct", productsInBag[i].codeProduct);
+        removeUnitProduct.setAttribute("onClick", "removeProduct(this)");
+        removeUnitProduct.style.borderColor = "black";
+        divUnits.appendChild(removeUnitProduct);
+
+        var iconRemove = document.createElement("img");
+        iconRemove.classList.add("icon-element");
+        iconRemove.src = "img/dash.svg";
+        removeUnitProduct.appendChild(iconRemove);
+
         var addUnitProduct = document.createElement("button");
         addUnitProduct.type = "button";
         addUnitProduct.title = "Agregar a la cesta";
         addUnitProduct.classList.add("btn");
         addUnitProduct.classList.add("btn-primary");
+        addUnitProduct.classList.add("col-sm-12");
+        addUnitProduct.classList.add("col-md-6");
+        addUnitProduct.classList.add("col-lg-6");
         addUnitProduct.setAttribute("codeProduct", productsInBag[i].codeProduct);
         addUnitProduct.setAttribute("onClick", "addProduct(this)");
-        addUnitProduct.style.width = "33%";
+        addUnitProduct.style.borderColor = "black";
         var product = products.filter(product => product.codeProduct === productsInBag[i].codeProduct);
         var index = products.findIndex(product => product.codeProduct === productsInBag[i].codeProduct);
         var imageProduct = document.getElementById("imageProduct" + index);
@@ -435,6 +444,7 @@ function buildBag(){
         divUnits.appendChild(addUnitProduct);
 
         var iconAdd = document.createElement("img");
+        iconAdd.classList.add("icon-element");
         iconAdd.src = "img/plus.svg";
         addUnitProduct.appendChild(iconAdd);
 
@@ -518,14 +528,14 @@ function removeUnits(){
 
 //Muestra el popup creado
 function openModal() {
-    let element = document.getElementById('overlay')
-    element.style.display = 'block'
+    let element = document.getElementById('overlay');
+    element.style.display = 'flex';
 }
 
 //Oculta el popup creado y realiza limpieza de los productos en el carrito y de las unidades ya no disponibles de cada producto
 function closeModal() {
-    let element = document.getElementById('overlay')
-    element.style.display = 'none'
+    let element = document.getElementById('overlay');
+    element.style.display = 'none';
     removeUnits();
     location.reload();
 }

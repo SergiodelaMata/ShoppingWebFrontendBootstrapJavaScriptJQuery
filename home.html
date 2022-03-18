@@ -25,7 +25,7 @@
               <span class="navbar-toggler-icon"></span>
             </button>
           
-            <div id="navbar" class="collapse navbar-collapse" id="navbarSupportedContent">
+            <div class="collapse navbar-collapse navbar-div" id="navbarSupportedContent">
               <ul class="navbar-nav me-auto">
                 <li class="nav-item" style="text-align:center;">
                   <a class="nav-link active" href="home.html">Home</a>
@@ -42,17 +42,17 @@
         </div>
     </nav>
     <div class="d-flex justify-content-center">
-        <h1>Encuentre aquí los productos que busca</h1>
+        <h1 style="text-align: center;">Encuentre aquí los productos que busca</h1>
     </div>
     <div class="overlay" id="overlay">
-        <div class="popup">
+        <div class="popup flex-column">
             <div onclick="closeModal()" class="closeIcon">
                 <button type="button" class="close" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <h2>¡La compra se ha efectuado correctamente! ¡Gracias por confiar en nosotros!</h2>
-            <h3 id="priceText"></h3>
+            <h3 id="priceText">"El pago total ha sido de "</h3>
             <div class="container">
                 <button type="button" class="btn btn-primary" style="width:100%;" onclick="closeModal()">
                     Aceptar
