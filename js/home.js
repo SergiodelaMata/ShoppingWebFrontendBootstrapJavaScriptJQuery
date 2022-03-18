@@ -1,8 +1,12 @@
+//Proporciona los datos iniciales de la página
 function getData()
 {
     return $.getJSON("files/test.json");
 }
 
+//Realiza una comprobación inicial para saber si hay datos guardados disponibles o no, en caso de disponer de datos, 
+// no se cargan los datos del fichero y construye las estructuras de los productos disponibles por categorías y los productos en 
+// la cesta
 if( localStorage.categories !== "" && localStorage.categories !== null && localStorage.categories !== undefined
     && localStorage.products !== "" && localStorage.products !== null && localStorage.products !== undefined
     && localStorage.users !== "" && localStorage.users !== null && localStorage.users !== undefined)
@@ -11,6 +15,7 @@ if( localStorage.categories !== "" && localStorage.categories !== null && localS
     var products = JSON.parse(localStorage.products);
     var users = JSON.parse(localStorage.users);
 
+    //Comprueba si hay datos aún de la cesta de productos y en tal caso, introduce un array vacío para poder introducir los datos más adelante 
     if(localStorage.productsInBag === null || localStorage.productsInBag === undefined)
     {
         localStorage.setItem("productsInBag", JSON.stringify([]));
@@ -19,6 +24,8 @@ if( localStorage.categories !== "" && localStorage.categories !== null && localS
     buildCatalog(categories, products);
     buildBag();
 }
+//En caso de no disponer de datos previamente guardados, se obtienen del fichero y luego se construyen las estructuras necesarias 
+// para mostrar los datos de los productos disponibles y de la cesta
 else
 {
     getData().done(function(json){
@@ -36,7 +43,7 @@ else
     });
 }
 
-
+//Permite crear la estructura del catálogo de los productos disponibles clasificados por categoría
 function buildCatalog(categories, products)
 {
     var structureCategory = "";
@@ -54,6 +61,8 @@ function buildCatalog(categories, products)
         var structureProducts = "";
         for(var j = 0; j < products.length; j++)
         {
+            //Establece por defecto a desactivado el botón de añadir unidades de un producto si se cuenta con el mismo número 
+            // de unidades disponibles que las que hay en la cesta y muestra la imagen del producto semitransparente
             if(parseInt(products[j].idCategory) === parseInt(categories[i].idCategory))
             {
                 product = productsInBag.filter(product => product.codeProduct === products[j].codeProduct);
@@ -67,7 +76,7 @@ function buildCatalog(categories, products)
                                 + "<img class='zoom' id='imageProduct" + j + "' src='" + products[j].image + "'style='width:100%;'/>"
                                 + "<p style='font-size:0.8em;'>Unidades: " + products[j].numUnits + "</p>"
                                 + "<h3 class='text-primary'>" + products[j].price + "€</h3>"
-                                + "<button id='buttonProduct" + j + "' class='btn btn-primary' type='button' style='width:100%; margin-bottom:1em;' codeProduct='" + products[j].codeProduct + "' onClick='addProduct(this)' disabled='true'>Añadir a<br>la cesta</button>"
+                                + "<button id='buttonProduct" + j + "' class='btn btn-primary' type='button' style='width:100%; margin-bottom:1em;' codeProduct='" + products[j].codeProduct + "' onClick='addProduct(this)' disabled='true' title='Agregar a la cesta'>Añadir a<br>la cesta</button>"
                             + "</div>"
                             + "<div class='card-body col-lg-8 col-md-6 col-sm-12'>"
                                 + "<strong>" + products[j].titleProduct + "</strong>" 
@@ -77,6 +86,8 @@ function buildCatalog(categories, products)
                         + "</div>"
                     + "</div>";
                 }
+                //Elimina el botón para añadir unidades y muestra un mensaje indicando que no queda stock del producto y 
+                // mostrando de manera semitransparente la imagen del producto
                 else if(parseInt(products[j].numUnits) === 0)
                 {
                     structureProducts += 
@@ -95,16 +106,18 @@ function buildCatalog(categories, products)
                         + "</div>"
                     + "</div>";
                 }
+                //Muestra todo el contenido del producto, el botón para añadir unidades a la cesta está operativo y 
+                // la imagen del producto se ve completamente sin ningún tipo de transparencia
                 else
                 {
                     structureProducts += 
                     "<div class='card col-sm-6' style='margin-bottom:0.5em;'>" 
                         + "<div class='row'>"
                             + "<div class='col-lg-4 col-md-6 col-sm-12 align-self-center' style='text-align:center;'>"
-                                + "<img class='zoom' id='imageProduct" + j + "' src='" + products[j].image + "'style='width:100%; margin-top: 1em;'/>"
+                                + "<img class='zoom' id='imageProduct" + j + "' src='" + products[j].image + "'alt='" + products[j].titleProduct + "' title='" + products[j].titleProduct + "' style='width:100%; margin-top: 1em;'/>"
                                 + "<p style='font-size:0.8em;'>Unidades: " + products[j].numUnits + "</p>"
                                 + "<h3 class='text-primary'>" + products[j].price + "€</h3>"
-                                + "<button id='buttonProduct" + j + "' class='btn btn-primary' type='button' style='width:100%; margin-bottom:1em;' codeProduct='" + products[j].codeProduct + "' onClick='addProduct(this)'>Añadir a<br>la cesta</button>"
+                                + "<button id='buttonProduct" + j + "' class='btn btn-primary' type='button' style='width:100%; margin-bottom:1em;' codeProduct='" + products[j].codeProduct + "' onClick='addProduct(this)' title='Agregar a la cesta'>Añadir a<br>la cesta</button>"
                             + "</div>"
                             + "<div class='card-body col-lg-8 col-md-6 col-sm-12'>"
                                 + "<strong>" + products[j].titleProduct + "</strong>" 
@@ -123,6 +136,7 @@ function buildCatalog(categories, products)
     $("#categories").append(structureCategory);
 }
 
+//Permite introducir un nuevo producto a la cesta o añadir una unidad más del producto a la cesta
 function addProduct(button)
 {
     var productsInBag = JSON.parse(localStorage.productsInBag);
@@ -131,13 +145,18 @@ function addProduct(button)
     const codeProduct = button.getAttribute("codeproduct");
     const product = products.filter(products => products.codeProduct === codeProduct)[0];
 
+    //Se comprueba que el producto cuenta con unidades
     if(product.numUnits !== 0)
     {
+        //Se comprueba que la cesta no está vacía. En tal caso revisa si se puede o no introducir
         if(productsInBag.length !== 0)
         {
+            //Se comprueba si el producto ya se encontraba en la cesta. En caso de encontrarse, se revisa si se puede introducir 
             const productInBag = productsInBag.filter(product => product.codeProduct === codeProduct)[0];
             if(productInBag !== undefined && productInBag !== null)
             {
+                //Se comprueba si el número de unidades en la cesta es inferior al número de unidades disponibles menos 1 y si es así
+                // incrementa en una unidad el número de unidades del producto en la cesta
                 if(productInBag.numUnits < product.numUnits - 1)
                 {
                     let index = productsInBag.findIndex( product => product.codeProduct === codeProduct);
@@ -152,6 +171,8 @@ function addProduct(button)
                     productsInBag[index] = productUpdated;
                     localStorage.setItem("productsInBag", JSON.stringify(productsInBag));
                 }
+                //En caso de que sea igual el número de unidades en la cesta al número de unidades en stock menos 1,
+                // en ese caso se hace lo mismo que en el caso anterior pero se deshabilita el botón para añadir unidades
                 else if(productInBag.numUnits === product.numUnits - 1)
                 {
                     button.disabled = true;
@@ -167,12 +188,14 @@ function addProduct(button)
                     productsInBag[index] = productUpdated;
                     localStorage.setItem("productsInBag", JSON.stringify(productsInBag));
                 }
+                //En el caso de no cumplirse los casos anteriores, simplemente se deshabilita el botón para añadir a la cesta
                 else
                 {
                     button.disabled = true;
 
                 }
             }
+            //En caso de no encontrarse, lo introduce directamente a la cesta
             else
             {
                 const productIntroduced = {
@@ -187,6 +210,7 @@ function addProduct(button)
                 localStorage.setItem("productsInBag", JSON.stringify(productsInBag));
             }
         }
+        //En caso de estar vacía, lo introduce directamente a la cesta
         else
         {
             const productIntroduced = {
@@ -209,6 +233,7 @@ function addProduct(button)
     buildBag();
 }
 
+//Permite eliminar un nuevo producto de la cesta o eliminar una unidad del producto de la cesta
 function removeProduct(button)
 {
     var productsInBag = JSON.parse(localStorage.productsInBag);
@@ -217,6 +242,7 @@ function removeProduct(button)
     const product = productsInBag.filter(products => products.codeProduct === codeProduct)[0];
     const index = productsInBag.findIndex(products => products.codeProduct === codeProduct);
 
+    //Comprueba si solo existe una unidad del producto y en tal caso lo saca de la cesta
     if(parseInt(product.numUnits) === 1)
     {
         productsInBag = productsInBag.filter(function(element){
@@ -224,6 +250,7 @@ function removeProduct(button)
         })
         localStorage.setItem("productsInBag", JSON.stringify(productsInBag));
     }
+    //En caso contrario elimina una unidad del producto de la cesta
     else
     {
         const productUpdated = {
@@ -242,6 +269,7 @@ function removeProduct(button)
 
 }
 
+//Permite construir la estructura que va a contener la cesta de los productos a comprar
 function buildBag(){
     var containerBagProducts = document.getElementById("bag-products");
     removeAllChildNodes(containerBagProducts);
@@ -297,11 +325,13 @@ function buildBag(){
     buttonFinishBuy.classList.add("btn");
     buttonFinishBuy.classList.add("btn-primary");
     buttonFinishBuy.style.width = "100%";
+    //Comprueba si la cesta está vacía. En caso de no ser así, se encuentra un botón habilitado para poder realizar la compra
     if(productsInBag.length !== 0)
     {
         buttonFinishBuy.setAttribute("onClick", "makeBuy()");
         buttonFinishBuy.removeAttribute("disabled");
     }
+    //En caso contrario, deshabilita el botón para realizar la compra
     else
     {
         buttonFinishBuy.disabled = true;
@@ -333,6 +363,8 @@ function buildBag(){
         var imageProduct = document.createElement("img");
         imageProduct.classList.add("zoom");
         imageProduct.src = productsInBag[i].image;
+        imageProduct.alt = productsInBag[i].titleProduct;
+        imageProduct.title = productsInBag[i].titleProduct;
         imageProduct.style.width = "80%";
         divLeftSideCard.appendChild(imageProduct);
 
@@ -348,6 +380,7 @@ function buildBag(){
 
         var removeUnitProduct = document.createElement("button");
         removeUnitProduct.type = "button";
+        removeUnitProduct.title = "Eliminar de la cesta";
         removeUnitProduct.classList.add("btn");
         removeUnitProduct.classList.add("btn-primary");
         removeUnitProduct.setAttribute("codeProduct", productsInBag[i].codeProduct);
@@ -372,6 +405,7 @@ function buildBag(){
 
         var addUnitProduct = document.createElement("button");
         addUnitProduct.type = "button";
+        addUnitProduct.title = "Agregar a la cesta";
         addUnitProduct.classList.add("btn");
         addUnitProduct.classList.add("btn-primary");
         addUnitProduct.setAttribute("codeProduct", productsInBag[i].codeProduct);
@@ -381,12 +415,16 @@ function buildBag(){
         var index = products.findIndex(product => product.codeProduct === productsInBag[i].codeProduct);
         var imageProduct = document.getElementById("imageProduct" + index);
         var buttonProduct = document.getElementById("buttonProduct" + index);
+        //Comprueba si el número de unidades del producto son menores o iguales al número de unidades del producto en la cesta
+        // y en ese caso deshabilita los botones del producto para añadir unidades al producto y vuelve semitransparente la imagen del producto
         if(parseInt(product[0].numUnits) <= parseInt(productsInBag[i].numUnits))
         {
             addUnitProduct.setAttribute("disabled", "true");
             imageProduct.style.opacity = "0.5";
             buttonProduct.setAttribute("disabled", "true");
         }
+        //En caso contrario, deja habilitados los botones para añadir unidades del producto en la cesta y muestra la imagen del producto 
+        // sin transparencia
         else
         {
             addUnitProduct.removeAttribute("disabled");
@@ -430,12 +468,14 @@ function buildBag(){
     }
 }
 
+//Permite eliminar todos los nodos hijos del nodo indicado del documento
 function removeAllChildNodes(parent){
     while(parent.firstChild){
         parent.removeChild(parent.firstChild);
     }
 }
 
+//Permite realiza la suma total de los productos del número de unidades de cada producto con su respectivo precio
 function additionTotalPrice()
 {
     var productsInBag = JSON.parse(localStorage.productsInBag);
@@ -448,6 +488,7 @@ function additionTotalPrice()
     return totalPrice;
 }
 
+//Muetra un popup para visualizar que se ha realizado correctamente la compra
 function makeBuy()
 {
     var totalPrice = additionTotalPrice();
@@ -456,6 +497,7 @@ function makeBuy()
     openModal();
 }
 
+//Elimina el número de unidades que hay de los distintos de productos en la cesta en los productos en stock y elimina lo que hubiera en la cesta
 function removeUnits(){
     var products = JSON.parse(localStorage.products);
     var productsInBag = JSON.parse(localStorage.productsInBag);
@@ -473,13 +515,16 @@ function removeUnits(){
     
 }
 
+//Muestra el popup creado
 function openModal() {
     let element = document.getElementById('overlay')
     element.style.display = 'block'
-  }
-  function closeModal() {
+}
+
+//Oculta el popup creado y realiza limpieza de los productos en el carrito y de las unidades ya no disponibles de cada producto
+function closeModal() {
     let element = document.getElementById('overlay')
     element.style.display = 'none'
     removeUnits();
     location.reload();
-  }
+}

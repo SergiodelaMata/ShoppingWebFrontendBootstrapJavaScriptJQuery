@@ -1,10 +1,13 @@
 const buttonNewProduct = document.getElementById("buttonNewProduct");
 
+//Proporciona los datos iniciales de la página
 function getData()
 {
     return $.getJSON("files/test.json");
 }
 
+//Realiza una comprobación inicial para saber si hay datos guardados disponibles o no, en caso de disponer de datos, 
+// no se cargan los datos del fichero y se obtiene el nuevo valor para el siguiente producto creado
 if( localStorage.categories !== "" && localStorage.categories !== null && localStorage.categories !== undefined
     && localStorage.products !== "" && localStorage.products !== null && localStorage.products !== undefined
     && localStorage.users !== "" && localStorage.users !== null && localStorage.users !== undefined)
@@ -16,6 +19,7 @@ if( localStorage.categories !== "" && localStorage.categories !== null && localS
     setValueNewProduct(products);
     buildSelectorCategories(categories);
 }
+//En caso de no disponer de datos previamente guardados, se obtienen del fichero y luego se obtiene el nuevo valor para el siguiente producto creado
 else
 {
     getData().done(function(json){
@@ -32,6 +36,7 @@ else
     });
 }
 
+//Permite obtener el identificador para el nuevo producto
 function setValueNewProduct(products)
 {
     var codeProductInput = document.getElementById("codeProduct");
@@ -47,6 +52,7 @@ function setValueNewProduct(products)
     codeProductInput.value = codeProduct;
 }
 
+//Permite crear un selector para poder seleccionar entre todas las categorías disponibles
 function buildSelectorCategories(categories)
 {
     var selectorCategories = document.getElementById("selectorCategory");
@@ -63,10 +69,12 @@ buttonNewProduct.addEventListener("click", async() => {
     var selectorCategories = document.getElementById("selectorCategory");
     const idCategory = getSelectValues(selectorCategories)[0];
 
+    //En caso de no seleccionar ninguna de las categorías disponibles, se avisa al usuario de ello
     if(idCategory === "-")
     {
         alert("Por favor, introduzca la categoría para este producto.")
     }
+    //En caso contrario, se comprueba si se puede introducir el producto
     else
     {
         const codeProduct = document.getElementById("codeProduct").value;
@@ -79,6 +87,7 @@ buttonNewProduct.addEventListener("click", async() => {
         const products = JSON.parse(localStorage.products);
     
         const listProducts = products.filter(products => products.titleProduct === titleProduct);
+        //En caso de no encontrarse en el listado, se introduce en él
         if(listProducts.length === 0)
         {
             const newProduct = {
@@ -98,6 +107,7 @@ buttonNewProduct.addEventListener("click", async() => {
             alert("El producto ha sido creado e introducido en su respectiva categoría.");
             window.location.href = "home.html";
         }
+        //En caso contrario, se avisa al usuario de que el producto ya se encontraba disponible
         else
         {
             alert("El producto introducido ya existe.");
@@ -105,6 +115,7 @@ buttonNewProduct.addEventListener("click", async() => {
     }
 })
 
+//Permite obtener las opciones seleccionadas dentro de un selector
 function getSelectValues(select) {
     var result = [];
     var options = select && select.options;
