@@ -320,7 +320,8 @@ function buildBag(){
     divRowTotalPrice.appendChild(divFinishBuy);
 
     var buttonFinishBuy = document.createElement("button");
-    buttonFinishBuy.textContent = "Hacer compra";
+    buttonFinishBuy.textContent = "Realizar pedido";
+    buttonFinishBuy.title = "Realizar pedido";
     buttonFinishBuy.type = "button";
     buttonFinishBuy.classList.add("btn");
     buttonFinishBuy.classList.add("btn-primary");
