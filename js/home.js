@@ -66,17 +66,22 @@ function buildCatalog(categories, products)
             if(parseInt(products[j].idCategory) === parseInt(categories[i].idCategory))
             {
                 product = productsInBag.filter(product => product.codeProduct === products[j].codeProduct);
-                
-                if(product[0] !== undefined && parseInt(products[j].numUnits) === parseInt(product[0].numUnits))
+                var numUnitsBag = 0;
+                if(product[0] !== undefined)
+                {
+                    numUnitsBag = product[0].numUnits;
+                }
+                    
+                if(product[0] !== undefined && parseInt(products[j].numUnits) - numUnitsBag === 0)
                 {
                     structureProducts += 
                     "<div class='card col-sm-6' style='margin-bottom:0.5em;'>" 
                         + "<div class='row'>"
-                            + "<div class='col-lg-4 col-md-6 col-sm-12 align-self-center' style='text-align:center;opacity: 0.5; margin-top: 1em;'>"
-                                + "<img class='zoom img-product' id='imageProduct" + j + "' src='" + products[j].image + "'style='width:100%;'/>"
-                                + "<p style='font-size:0.8em;'>Unidades: " + products[j].numUnits + "</p>"
+                            + "<div class='col-lg-4 col-md-6 col-sm-12 align-self-center' style='text-align:center; margin-top: 1em;'>"
+                                + "<img class='zoom img-product' id='imageProduct" + j + "' src='" + products[j].image + "'style='width:100%; opacity: 0.5;'/>"
+                                + "<p id='unitsProduct" + products[j].codeProduct + "' style='font-size:0.8em;' codeProduct='" + products[j].codeProduct + "'>Unidades: " + (parseInt(products[j].numUnits) - numUnitsBag) + "</p>"
                                 + "<h3 class='text-primary'>" + products[j].price + "€</h3>"
-                                + "<button id='buttonProduct" + j + "' class='btn btn-primary btn-add' type='button' style='margin-bottom:1em; font-size: 0.8em;' codeProduct='" + products[j].codeProduct + "' onClick='addProduct(this)' disabled='true' title='Añadir a la cesta'>Añadir a<br>la cesta</button>"
+                                + "<button id='buttonProduct" + products[j].codeProduct + "' class='btn btn-primary btn-add' type='button' style='margin-bottom:1em; width: 100%; font-size: 0.8em;' codeProduct='" + products[j].codeProduct + "' onClick='addProduct(this)' disabled='true' title='Añadir a la cesta'>Añadir a<br>la cesta</button>"
                             + "</div>"
                             + "<div class='card-body col-lg-8 col-md-6 col-sm-12'>"
                                 + "<strong>" + products[j].titleProduct + "</strong>" 
@@ -88,7 +93,7 @@ function buildCatalog(categories, products)
                 }
                 //Elimina el botón para añadir unidades y muestra un mensaje indicando que no queda stock del producto y 
                 // mostrando de manera semitransparente la imagen del producto
-                else if(parseInt(products[j].numUnits) === 0)
+                else if(product[0] === undefined && parseInt(products[j].numUnits) === 0)
                 {
                     structureProducts += 
                     "<div class='card col-sm-6' style='margin-bottom:0.5em;'>" 
@@ -115,9 +120,9 @@ function buildCatalog(categories, products)
                         + "<div class='row'>"
                             + "<div class='col-lg-4 col-md-6 col-sm-12 align-self-center' style='text-align:center;'>"
                                 + "<img class='zoom img-product' id='imageProduct" + j + "' src='" + products[j].image + "'alt='" + products[j].titleProduct + "' title='" + products[j].titleProduct + "' style='margin-top: 1em;'/>"
-                                + "<p style='font-size:0.8em;'>Unidades: " + products[j].numUnits + "</p>"
+                                + "<p id='unitsProduct" + products[j].codeProduct + "' style='font-size:0.8em;' codeProduct='" + products[j].codeProduct + "'>Unidades: " + (parseInt(products[j].numUnits) - numUnitsBag) + "</p>"
                                 + "<h3 class='text-primary'>" + products[j].price + "€</h3>"
-                                + "<button id='buttonProduct" + j + "' class='btn btn-primary' type='button' style='width:100%; margin-bottom:1em; font-size: 0.8em;' codeProduct='" + products[j].codeProduct + "' onClick='addProduct(this)' title='Añadir a la cesta'>Añadir a<br>la cesta</button>"
+                                + "<button id='buttonProduct" + products[j].codeProduct + "' class='btn btn-primary' type='button' style='width:100%; margin-bottom:1em; font-size: 0.8em;' codeProduct='" + products[j].codeProduct + "' onClick='addProduct(this)' title='Añadir a la cesta'>Añadir a<br>la cesta</button>"
                             + "</div>"
                             + "<div class='card-body col-lg-8 col-md-6 col-sm-12'>"
                                 + "<strong>" + products[j].titleProduct + "</strong>" 
@@ -237,10 +242,13 @@ function addProduct(button)
 function removeProduct(button)
 {
     var productsInBag = JSON.parse(localStorage.productsInBag);
+    var products = JSON.parse(localStorage.products);
 
     const codeProduct = button.getAttribute("codeproduct");
-    const product = productsInBag.filter(products => products.codeProduct === codeProduct)[0];
-    const index = productsInBag.findIndex(products => products.codeProduct === codeProduct);
+    const productNotInBag = products.filter(product => product.codeProduct === codeProduct)[0];
+    const indexNotInBag = products.findIndex(product => product.codeProduct === codeProduct);
+    const product = productsInBag.filter(product => product.codeProduct === codeProduct)[0];
+    const index = productsInBag.findIndex(product => product.codeProduct === codeProduct);
 
     //Comprueba si solo existe una unidad del producto y en tal caso lo saca de la cesta
     if(parseInt(product.numUnits) === 1)
@@ -249,7 +257,13 @@ function removeProduct(button)
             return element != product;
         })
         localStorage.setItem("productsInBag", JSON.stringify(productsInBag));
-    }
+        var numUnits = document.getElementById("unitsProduct" + productNotInBag.codeProduct);
+        numUnits.textContent = "Unidades: " + productNotInBag.numUnits;
+        var buttonProduct = document.getElementById("buttonProduct" + productNotInBag.codeProduct);
+        buttonProduct.removeAttribute("disabled");
+        var imageProduct = document.getElementById("imageProduct" + indexNotInBag);
+        imageProduct.style.opacity = "1";
+}
     //En caso contrario elimina una unidad del producto de la cesta
     else
     {
@@ -387,7 +401,9 @@ function buildBag(){
         divUnits.appendChild(divUnitsText);
 
         var unitsProduct = document.createElement("p");
+        unitsProduct.id = "unitsProductInBag" + productsInBag[i].codeProduct;
         unitsProduct.textContent = productsInBag[i].numUnits;
+        unitsProduct.setAttribute("codeProduct", productsInBag[i].codeProduct);
         unitsProduct.style.textAlign = "center";
         unitsProduct.style.fontSize = "1em";
         divUnitsText.appendChild(unitsProduct);
@@ -424,10 +440,10 @@ function buildBag(){
         var product = products.filter(product => product.codeProduct === productsInBag[i].codeProduct);
         var index = products.findIndex(product => product.codeProduct === productsInBag[i].codeProduct);
         var imageProduct = document.getElementById("imageProduct" + index);
-        var buttonProduct = document.getElementById("buttonProduct" + index);
+        var buttonProduct = document.getElementById("buttonProduct" + productsInBag[i].codeProduct);
         //Comprueba si el número de unidades del producto son menores o iguales al número de unidades del producto en la cesta
         // y en ese caso deshabilita los botones del producto para añadir unidades al producto y vuelve semitransparente la imagen del producto
-        if(parseInt(product[0].numUnits) <= parseInt(productsInBag[i].numUnits))
+        if(parseInt(product[0].numUnits) - parseInt(productsInBag[i].numUnits) === 0)
         {
             addUnitProduct.setAttribute("disabled", "true");
             imageProduct.style.opacity = "0.5";
@@ -439,9 +455,13 @@ function buildBag(){
         {
             addUnitProduct.removeAttribute("disabled");
             imageProduct.style.opacity = "1";
+            if(buttonProduct !== undefined && buttonProduct !== null)
             buttonProduct.removeAttribute("disabled");
         }
         divUnits.appendChild(addUnitProduct);
+
+        var numUnits = document.getElementById("unitsProduct" + productsInBag[i].codeProduct);
+        numUnits.textContent = "Unidades: " + (parseInt(product[0].numUnits) - parseInt(productsInBag[i].numUnits));
 
         var iconAdd = document.createElement("img");
         iconAdd.classList.add("icon-element");
