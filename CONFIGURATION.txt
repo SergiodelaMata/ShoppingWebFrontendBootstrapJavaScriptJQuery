@@ -1,0 +1,11 @@
+Este documento sirve para poder configurar correctamente el proyecto para su correcto funcionamiento.
+
+Antes de realizar nada sobre el proyecto, se deben seguir los siguientes pasos:
+1. Instalar una versión de npm o instalar una versión de nvm y que ésta cuente con una versión de npm. 
+    Se recomienda hacer uso de la versión 8.1.0 o una superior.
+2. Instalar sobre npm el paquete http-server mediante el comando "npm install -g http-server".
+3. Situarse desde un terminal sobre el directorio donde se encuentra los ficheros HTML de la página web.
+4. Ejecutar el comando "http-server -c-1" para obtener el listado de direcciones IP y puerto que permiten emplear para acceder a la página web.
+
+Mientras que no se cancele el comando indicado, se podrá acceder al contenido de la página web desde cualquiera de las direcciones proporcionadas y 
+    sin tener restricciones de acceso a ficheros distintos a HTML, CSS y JavaScript desde cualquier navegador.
